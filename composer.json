@@ -1,0 +1,14 @@
+{
+	"name": "phi-event",
+	"description": "Phi event",
+	"autoload": {
+		"psr-4": {
+			"Phi\\Event\\": "source/class"
+		},
+		"files": [
+
+		]
+	}
+}
+
+
