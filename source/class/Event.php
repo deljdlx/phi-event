@@ -12,7 +12,7 @@ class Event
     protected $defaultPrevented=false;
 
 
-    public function __construct($name='event', $data=array(), $source=null) {
+    public function __construct($source, $name='event', $data=array()) {
         $this->name=$name;
         $this->data=$data;
         $this->source=$source;
