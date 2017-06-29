@@ -5,9 +5,9 @@ namespace Phi\Event;
 class Event
 {
 
-    public $name='event';
-    public $data;
-    public $source;
+    protected $name='event';
+    protected $data;
+    protected $source;
 
     protected $defaultPrevented=false;
 
