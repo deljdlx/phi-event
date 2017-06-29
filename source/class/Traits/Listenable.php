@@ -6,6 +6,7 @@ namespace Phi\Event\Traits;
 use Phi\Event\Event;
 use Phi\Event\Listener;
 use Phi\Event\Interfaces\Listenable as IListenable;
+
 Trait Listenable
 {
 
@@ -22,13 +23,11 @@ Trait Listenable
     private $parentListenables = array();
 
 
-    
     public function addParentListenable(IListenable $object)
     {
         $this->parentListenables[] = $object;
         return $this;
     }
-
 
 
     public function getDefaultListeners()
@@ -82,7 +81,7 @@ Trait Listenable
             $event = new Event($this, $event, $data);
         }
         else {
-            $normalizedEventName=$event->getName();
+            $normalizedEventName = strtolower($event->getName());
         }
 
 

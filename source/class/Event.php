@@ -15,12 +15,16 @@ class Event
     protected $bubbling = true;
 
 
-    public function __construct($source, $name = 'event', $data = array())
+    public function __construct($source, $name = null, $data = array())
     {
+        if ($name === null) {
+            $name = static::class;
+        }
         $this->name = $name;
         $this->data = $data;
         $this->source = $source;
     }
+
 
     public function getName()
     {
@@ -36,6 +40,7 @@ class Event
     {
         return $this->data;
     }
+
 
     public function preventDefault()
     {
