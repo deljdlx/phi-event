@@ -18,6 +18,10 @@ class Event
         $this->source=$source;
     }
 
+    public function getName() {
+        return $this->name;
+    }
+
     public function getSource() {
         return $this->source;
     }

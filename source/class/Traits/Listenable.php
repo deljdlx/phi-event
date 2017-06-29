@@ -3,11 +3,15 @@ namespace Phi\Event\Traits;
 
 
 use Phi\Event\Event;
+use Phi\Event\Listener;
 
 Trait Listenable
 {
 
 
+    /**
+     * @var Listener[]
+     */
     protected $listeners=array();
     protected $defaultListeners=array();
 
@@ -28,13 +32,17 @@ Trait Listenable
 
 
 
-    public function addEventListener($eventName, $listener, $name=null) {
+    public function addEventListener($eventName, \Closure $callback, $name=null) {
 
         $normalizedEventName=strtolower($eventName);
 
         if(!isset($this->listeners[$normalizedEventName])) {
             $this->listeners[$normalizedEventName]=array();
         }
+
+
+        $listener=new Listener($eventName, $callback);
+
         if($name) {
             $this->listeners[$normalizedEventName][$name]=$listener;
         }
@@ -51,31 +59,26 @@ Trait Listenable
 
         $normalizedEventName=strtolower($eventName);
 
-        if(!is_array($data)) {
-            $data=array($data);
-        }
 
         $event=new Event($this, $eventName, $data);
-        $data[]=$event;
+
+
+        echo '<pre id="' . __FILE__ . '-' . __LINE__ . '" style="border: solid 1px rgb(255,0,0); background-color:rgb(255,255,255)">';
+        echo '<div style="background-color:rgba(100,100,100,1); color: rgba(255,255,255,1)">' . __FILE__ . '@' . __LINE__ . '</div>';
+        print_r($this->listeners);
+        echo '</pre>';
 
 
         if(isset($this->listeners[$normalizedEventName])) {
             foreach ($this->listeners[$normalizedEventName] as $listener) {
-                if(is_callable($listener)) {
-                    $bindedClosure=$listener->bindTo($this);
-                    call_user_func_array(array($bindedClosure, '__invoke'), $data);
-                }
+                $listener->handleEvent($event);
             }
         }
 
         if(!$event->isDefaultPrevented()) {
             if(isset($this->defaultListeners[$normalizedEventName])) {
                 foreach ($this->defaultListeners[$normalizedEventName] as $listener) {
-                    if(is_callable($listener)) {
-
-                        $bindedClosure=$listener->bindTo($this);
-                        call_user_func_array(array($bindedClosure, '__invoke'), $data);
-                    }
+                    $listener->handleEvent($event);
                 }
             }
         }
