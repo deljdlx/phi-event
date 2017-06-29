@@ -1,10 +1,11 @@
 <?php
+
 namespace Phi\Event\Traits;
 
 
 use Phi\Event\Event;
 use Phi\Event\Listener;
-
+use Phi\Event\Interfaces\Listenable as IListenable;
 Trait Listenable
 {
 
@@ -12,72 +13,101 @@ Trait Listenable
     /**
      * @var Listener[]
      */
-    protected $listeners=array();
-    protected $defaultListeners=array();
+    private $listeners = array();
+    private $defaultListeners = array();
+
+    /**
+     * @var IListenable[]
+     */
+    private $parentListenables = array();
 
 
-    public function getDefaultListeners() {
+    
+    public function addParentListenable(IListenable $object)
+    {
+        $this->parentListenables[] = $object;
+        return $this;
+    }
+
+
+
+    public function getDefaultListeners()
+    {
         return $this->defaultListeners;
     }
 
 
-
-    public function addDefaultEventListener($name, $listener) {
-        if(!isset($this->defaultListeners[$name])) {
-            $this->defaultListeners[$name]=array();
+    public function addDefaultEventListener($name, $listener)
+    {
+        if (!isset($this->defaultListeners[$name])) {
+            $this->defaultListeners[$name] = array();
         }
-        $this->defaultListeners[$name][]=$listener;
+        $this->defaultListeners[$name][] = $listener;
         return $this;
     }
 
 
+    public function addEventListener($eventName, \Closure $callback, $listenerName = null)
+    {
 
-    public function addEventListener($eventName, \Closure $callback, $listenerName=null) {
+        $normalizedEventName = strtolower($eventName);
 
-        $normalizedEventName=strtolower($eventName);
-
-        if(!isset($this->listeners[$normalizedEventName])) {
-            $this->listeners[$normalizedEventName]=array();
+        if (!isset($this->listeners[$normalizedEventName])) {
+            $this->listeners[$normalizedEventName] = array();
         }
 
 
-        $listener=new Listener($eventName, $callback);
+        $listener = new Listener($eventName, $callback);
 
-        if($listenerName) {
-            $this->listeners[$normalizedEventName][$listenerName]=$listener;
+        if ($listenerName) {
+            $this->listeners[$normalizedEventName][$listenerName] = $listener;
         }
         else {
-            $this->listeners[$normalizedEventName][]=$listener;
+            $this->listeners[$normalizedEventName][] = $listener;
         }
         return $this;
     }
 
 
+    /**
+     * @param $event
+     * @param array $data
+     * Warning Polymorphic function
+     */
+    public function fireEvent($event, $data = array())
+    {
+
+        if (!$event instanceof Event) {
+            $normalizedEventName = strtolower($event);
+            $event = new Event($this, $event, $data);
+        }
+        else {
+            $normalizedEventName=$event->getName();
+        }
 
 
-    public function fireEvent($eventName, $data=array()) {
-
-        $normalizedEventName=strtolower($eventName);
-
-
-        $event=new Event($this, $eventName, $data);
-
-
-        if(isset($this->listeners[$normalizedEventName])) {
+        if (isset($this->listeners[$normalizedEventName])) {
             foreach ($this->listeners[$normalizedEventName] as $listener) {
                 $listener->handleEvent($event);
             }
         }
 
-        if(!$event->isDefaultPrevented()) {
-            if(isset($this->defaultListeners[$normalizedEventName])) {
+        if (!$event->isDefaultPrevented()) {
+            if (isset($this->defaultListeners[$normalizedEventName])) {
                 foreach ($this->defaultListeners[$normalizedEventName] as $listener) {
                     $listener->handleEvent($event);
                 }
             }
         }
 
+
+        foreach ($this->parentListenables as $parent) {
+            if ($event->bubbling()) {
+                $parent->fireEvent($event);
+            }
+        }
     }
+
 }
 
 
