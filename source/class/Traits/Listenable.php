@@ -46,7 +46,7 @@ Trait Listenable
     }
 
 
-    public function addEventListener($eventName, \Closure $callback, $listenerName = null)
+    public function addEventListener($eventName, $callback, $listenerName = null)
     {
 
         $normalizedEventName = strtolower($eventName);
@@ -56,7 +56,13 @@ Trait Listenable
         }
 
 
-        $listener = new Listener($eventName, $callback);
+        if(!($callback instanceof  Listener)) {
+            $listener = new Listener($eventName, $callback);
+        }
+        else {
+            $listener = $callback;
+        }
+
 
         if ($listenerName) {
             $this->listeners[$normalizedEventName][$listenerName] = $listener;

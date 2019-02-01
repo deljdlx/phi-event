@@ -3,11 +3,15 @@
 namespace Phi\Event;
 
 
+use Phi\Traits\Collection;
+
 class Event
 {
 
+    use Collection;
+
     protected $name = 'event';
-    protected $data;
+    //protected $data;
     protected $source;
 
     protected $defaultPrevented = false;
@@ -17,11 +21,16 @@ class Event
 
     public function __construct($source, $name = null, $data = array())
     {
+        if(is_array($name)) {
+            $data = $name;
+            $name = null;
+        }
+
         if ($name === null) {
             $name = static::class;
         }
         $this->name = $name;
-        $this->data = $data;
+        $this->setVariables($data);
         $this->source = $source;
     }
 
@@ -38,7 +47,7 @@ class Event
 
     public function getData()
     {
-        return $this->data;
+        return $this->getVariables();
     }
 
 

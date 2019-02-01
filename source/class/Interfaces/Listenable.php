@@ -17,7 +17,7 @@ interface Listenable
     public function addDefaultEventListener($name, $listener);
 
 
-    public function addEventListener($eventName, \Closure $callback, $listenerName = null);
+    public function addEventListener($eventName, $callback, $listenerName = null);
 
     /**
      * @param $event
