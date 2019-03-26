@@ -38,11 +38,11 @@ Trait Listenable
 
     public static function addDefaultEventListener($name, $listener)
     {
-        if (!isset(static::$defaultListeners[$name])) {
-            static::$defaultListeners[$name] = array();
+        if (!isset(self::$defaultListeners[$name])) {
+            self::$defaultListeners[$name] = array();
         }
-        static::$defaultListeners[$name][] = $listener;
-        return static::$defaultListeners;
+        self::$defaultListeners[$name][] = $listener;
+        return self::$defaultListeners;
     }
 
 
@@ -98,8 +98,8 @@ Trait Listenable
         }
 
         if (!$event->isDefaultPrevented()) {
-            if (isset(static::$defaultListeners[$eventName])) {
-                foreach (static::$defaultListeners[$eventName] as $listener) {
+            if (isset(self::$defaultListeners[$eventName])) {
+                foreach (self::$defaultListeners[$eventName] as $listener) {
                     if($listener instanceof Listener) {
                         $listener->handleEvent($event);
                     }
