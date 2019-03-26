@@ -11,10 +11,10 @@ interface Listenable
     public function addParentListenable(Listenable $object);
 
 
-    public function getDefaultListeners();
+    public static function getDefaultListeners();
 
 
-    public function addDefaultEventListener($name, $listener);
+    public static function addDefaultEventListener($name, $listener);
 
 
     public function addEventListener($eventName, $callback, $listenerName = null);

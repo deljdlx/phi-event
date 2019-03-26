@@ -15,7 +15,7 @@ Trait Listenable
      * @var Listener[]
      */
     private $listeners = array();
-    private $defaultListeners = array();
+    private static $defaultListeners = array();
 
     /**
      * @var IListenable[]
@@ -30,19 +30,19 @@ Trait Listenable
     }
 
 
-    public function getDefaultListeners()
+    public static function getDefaultListeners()
     {
-        return $this->defaultListeners;
+        return static::$defaultListeners;
     }
 
 
-    public function addDefaultEventListener($name, $listener)
+    public static function addDefaultEventListener($name, $listener)
     {
-        if (!isset($this->defaultListeners[$name])) {
-            $this->defaultListeners[$name] = array();
+        if (!isset(static::$defaultListeners[$name])) {
+            static::$defaultListeners[$name] = array();
         }
-        $this->defaultListeners[$name][] = $listener;
-        return $this;
+        static::$defaultListeners[$name][] = $listener;
+        return static::$defaultListeners;
     }
 
 
@@ -98,9 +98,14 @@ Trait Listenable
         }
 
         if (!$event->isDefaultPrevented()) {
-            if (isset($this->defaultListeners[$normalizedEventName])) {
-                foreach ($this->defaultListeners[$normalizedEventName] as $listener) {
-                    $listener->handleEvent($event);
+            if (isset(static::$defaultListeners[$normalizedEventName])) {
+                foreach (static::$defaultListeners[$normalizedEventName] as $listener) {
+                    if($listener instanceof Listener) {
+                        $listener->handleEvent($event);
+                    }
+                    else if(is_callable($listener)) {
+                        call_user_func_array($listener, array($event));
+                    }
                 }
             }
         }
