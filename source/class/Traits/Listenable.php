@@ -83,23 +83,23 @@ Trait Listenable
     {
 
         if (!$event instanceof Event) {
-            $normalizedEventName = strtolower($event);
+            $eventName = $event;
             $event = new Event($this, $event, $data);
         }
         else {
-            $normalizedEventName = strtolower($event->getName());
+            $eventName = $event->getName();
         }
 
 
-        if (isset($this->listeners[$normalizedEventName])) {
-            foreach ($this->listeners[$normalizedEventName] as $listener) {
+        if (isset($this->listeners[$eventName])) {
+            foreach ($this->listeners[$eventName] as $listener) {
                 $listener->handleEvent($event);
             }
         }
 
         if (!$event->isDefaultPrevented()) {
-            if (isset(static::$defaultListeners[$normalizedEventName])) {
-                foreach (static::$defaultListeners[$normalizedEventName] as $listener) {
+            if (isset(static::$defaultListeners[$eventName])) {
+                foreach (static::$defaultListeners[$eventName] as $listener) {
                     if($listener instanceof Listener) {
                         $listener->handleEvent($event);
                     }
