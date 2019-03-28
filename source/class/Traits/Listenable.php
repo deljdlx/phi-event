@@ -79,7 +79,8 @@ Trait Listenable
      * @param array $data
      * Warning Polymorphic function
      */
-    public function fireEvent($event, $data = array())
+    public function fireEvent($event, $data = array(), $staticData = true
+    )
     {
 
         if (!$event instanceof Event) {
@@ -93,6 +94,11 @@ Trait Listenable
 
         if (isset($this->listeners[$eventName])) {
             foreach ($this->listeners[$eventName] as $listener) {
+
+                if($staticData) {
+                    $event->setVariables($data);
+                }
+
                 $listener->handleEvent($event);
             }
         }
@@ -100,6 +106,11 @@ Trait Listenable
         if (!$event->isDefaultPrevented()) {
             if (isset(self::$defaultListeners[$eventName])) {
                 foreach (self::$defaultListeners[$eventName] as $listener) {
+
+                    if($staticData) {
+                        $event->setVariables($data);
+                    }
+
                     if($listener instanceof Listener) {
                         $listener->handleEvent($event);
                     }
@@ -116,6 +127,12 @@ Trait Listenable
                 $parent->fireEvent($event);
             }
         }
+
+        if($staticData) {
+            $event->setVariables($data);
+        }
+
+        return $event;
     }
 
 }

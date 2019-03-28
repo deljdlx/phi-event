@@ -45,9 +45,15 @@ class Event
         return $this->source;
     }
 
-    public function getData()
+    public function getData($key = null)
     {
-        return $this->getVariables();
+        if($key === null) {
+            return $this->getVariables();
+        }
+        else {
+            return $this->getVariable($key);
+        }
+
     }
 
 
