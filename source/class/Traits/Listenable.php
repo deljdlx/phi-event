@@ -32,7 +32,7 @@ Trait Listenable
 
     public static function getDefaultListeners()
     {
-        return static::$defaultListeners;
+        return self::$defaultListeners;
     }
 
 
