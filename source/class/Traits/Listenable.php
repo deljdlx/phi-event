@@ -79,8 +79,7 @@ Trait Listenable
      * @param array $data
      * Warning Polymorphic function
      */
-    public function fireEvent($event, $data = array(), $staticData = true
-    )
+    public function fireEvent($event, $data = array(), $staticData = true)
     {
 
         if (!$event instanceof Event) {
