@@ -1,5 +1,5 @@
 {
-	"name": "phi-event",
+	"name": "elbiniou/phi-event",
 	"description": "Phi event",
 	"autoload": {
 		"psr-4": {

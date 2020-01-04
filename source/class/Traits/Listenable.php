@@ -77,7 +77,8 @@ Trait Listenable
     /**
      * @param $event
      * @param array $data
-     * Warning Polymorphic function
+     * @param bool $staticData
+     * @return Event
      */
     public function fireEvent($event, $data = array(), $staticData = true)
     {
